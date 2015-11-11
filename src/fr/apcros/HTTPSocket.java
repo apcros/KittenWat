@@ -35,20 +35,26 @@ public class HTTPSocket {
         this.out = new PrintWriter(cs.getOutputStream(),true);
         this.in = new BufferedReader(new InputStreamReader(cs.getInputStream()));
         String currLine;
-        String GETreq;
+        String GETreq = "ERR_NO_GET";
+        //TODO : Write a proper HTTP request parser
         while (!(currLine = getLine()).isEmpty()) {
             if (currLine.contains("GET")){
                 GETreq = currLine;
             }
             System.out.println(currLine);
         }
+        //TODO : Add a proper debugging system message
         System.out.println("Looks like the HTTP request is finished, I'll answer..");
+        System.out.println("[DEBUG] - "+GETreq);
         replyHTTP();
         System.out.println("Just replied !");
         cs.close();
         System.out.println("Now I can say bye bye !");
 
     }
+
+
+     // TODO : Move the reply to a class with headers handling AND Threads
     public void replyHTTP() {
         this.out.println("HTTP/1.0 200 OK");
         this.out.println("");
