@@ -8,6 +8,9 @@ public class Main {
 	    HTTPSocket hs = new HTTPSocket(8180);
 
         String currLine;
+        System.out.println("KittenWat HTTP server");
+        System.out.println("0.1 INDEV");
+        System.out.println("Accepting connexions on 8180");
         while(true){
             hs.getHTTPrequest();
         }
