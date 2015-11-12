@@ -1,7 +1,10 @@
 package fr.apcros;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Properties;
 
 public class Main {
     //TODO : Add a settings class for ports, default pages and debugging
@@ -11,11 +14,20 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         ServerSocket s;
-        s = new ServerSocket(8180);
+        Properties settings = new Properties();
+        FileInputStream in = new FileInputStream("kitten.cfg");
+
+        settings.load(in);
+        in.close();
+
+        if(!validSettings(settings)) {
+            throw new IOException("Error with Config file");
+        }
+        s = new ServerSocket(Integer.parseInt(settings.getProperty("listenPort")));
 
         System.out.println("KittenWat HTTP server");
         System.out.println("0.11 INDEV");
-        System.out.println("Accepting connexions on 8180");
+        System.out.println("Accepting connexions on "+settings.getProperty("listenPort"));
         HTTPSocket hs = null;
         while(true){
             if(hs == null ){
@@ -30,5 +42,14 @@ public class Main {
 
         }
 
+    }
+
+    public static boolean validSettings(Properties p) {
+        boolean res = false;
+
+        if( !p.getProperty("listenPort").isEmpty() || !p.getProperty("publicFolder").isEmpty() || !p.getProperty("defaultIndex").isEmpty()) {
+            res = true;
+        }
+        return res;
     }
 }
