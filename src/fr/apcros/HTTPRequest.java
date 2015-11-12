@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Apcros on 12/11/2015.
+ * This class parse Request and breaks headers
  */
 public class HTTPRequest {
 
@@ -12,17 +12,17 @@ public class HTTPRequest {
 
     public HTTPRequest(String fullRequest) {
         String[] lines = fullRequest.split("\n");
-        for (int i = 0; i < lines.length; i++) {
-            if(lines[i].startsWith("GET")) {
-                this.headers.put("HTTP",lines[i]);
+        for (String line : lines) {
+            if (line.startsWith("GET")) {
+                this.headers.put("HTTP", line);
             } else {
-                String[] splitted = lines[i].split(":");
+                String[] splitted = line.split(":");
                 String name = splitted[0];
                 String value = splitted[1];
                 for (int j = 2; j < splitted.length; j++) {
-                    value += ":"+splitted[j];
+                    value += ":" + splitted[j];
                 }
-                this.headers.put(name,value);
+                this.headers.put(name, value);
             }
 
 

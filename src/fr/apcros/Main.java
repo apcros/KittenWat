@@ -1,7 +1,6 @@
 package fr.apcros;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Properties;
@@ -29,15 +28,14 @@ public class Main {
         System.out.println("0.11 INDEV");
         System.out.println("Accepting connexions on "+settings.getProperty("listenPort"));
         HTTPSocket hs = null;
-        while(true){
-            if(hs == null ){
+        while (true) {
+            if (hs == null) {
                 hs = new HTTPSocket(s.accept());
                 hs.start();
             }
-            if(hs.getState().name().equals("TERMINATED")) {
+            if (hs.getState().name().equals("TERMINATED")) {
                 hs = null;
             }
-
 
 
         }
