@@ -1,9 +1,6 @@
 package fr.apcros;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,11 +13,13 @@ public class HTTPSocket extends Thread {
     private ServerSocket s;
     private PrintWriter out;
     private BufferedReader in;
-
+    private Logger lg;
 
     public HTTPSocket(Socket cs) {
 
             this.cs = cs;
+            lg = new Logger();
+
 
     }
     public void run() {
@@ -55,6 +54,8 @@ public class HTTPSocket extends Thread {
         System.out.println("Looks like the HTTP request is finished, I'll answer..");
         System.out.println("[DEBUG] - " + hr.getHeader("HTTP"));
         System.out.println(hr.getHeader("Host"));
+        lg.writeLog(cs.getInetAddress().toString(),hr.getHeader("User-Agent"),hr.getHeader("HTTP"));
+
         replyHTTP();
         cs.close();
         in.close();
