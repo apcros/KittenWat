@@ -3,9 +3,10 @@ package fr.apcros;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Properties;
 
 /**
- * Created by Apcros on 10/11/2015.
+ * This is the main class for socket
  */
 public class HTTPSocket extends Thread {
 
@@ -14,12 +15,12 @@ public class HTTPSocket extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private Logger lg;
-
-    public HTTPSocket(Socket cs) {
+    private Properties settings;
+    public HTTPSocket(Socket cs,Properties p) {
 
             this.cs = cs;
             lg = new Logger();
-
+            this.settings = p;
 
     }
     public void run() {
@@ -35,12 +36,12 @@ public class HTTPSocket extends Thread {
         }
     }
     public String getLine() throws IOException {
-        String ret = in.readLine();
-        return ret;
+        return in.readLine();
     }
     public void getHTTPrequest() throws IOException {
         this.out = new PrintWriter(cs.getOutputStream(),true);
         this.in = new BufferedReader(new InputStreamReader(cs.getInputStream()));
+
         String currLine;
         String httpRequestString = "";
 
@@ -56,19 +57,43 @@ public class HTTPSocket extends Thread {
         System.out.println(hr.getHeader("Host"));
         lg.writeLog(cs.getInetAddress().toString(),hr.getHeader("User-Agent"),hr.getHeader("HTTP"));
 
-        replyHTTP();
+        replyHTTP(hr);
         cs.close();
         in.close();
         out.close();
 
     }
 
+    public String loadFile(String filePath) {
+        String everything;
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
 
-     // TODO : Move the reply to a class with headers handling AND Threads
-    public void replyHTTP() {
-        this.out.println("HTTP/1.0 200 OK");
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            everything = sb.toString();
+        } catch (Exception e) {
+            everything = null;
+        }
+        return everything;
+    }
+
+    public void replyHTTP(HTTPRequest hr){
+        String HTTP_main = "HTTP/1.0 200 OK";
+        String body = "";
+        if(hr.getHeader("HTTP").equals("GET / HTTP/1.1")) {
+            body = loadFile(settings.getProperty("publicFolder")+"/"+settings.getProperty("defaultIndex"));
+            if(body == null) { HTTP_main = "HTTP/1.0 404 Not Found"; body = "404 Not found";}
+        }
+
+
+        this.out.println(HTTP_main);
         this.out.println("");
-        this.out.println("<html><body><h1>EVERYTHING IS FINE</h1></body></html>");
+        this.out.println(body);
     }
 
 }

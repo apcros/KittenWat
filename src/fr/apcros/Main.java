@@ -30,7 +30,7 @@ public class Main {
         HTTPSocket hs = null;
         while (true) {
             if (hs == null) {
-                hs = new HTTPSocket(s.accept());
+                hs = new HTTPSocket(s.accept(),settings);
                 hs.start();
             }
             if (hs.getState().name().equals("TERMINATED")) {
